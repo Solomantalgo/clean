@@ -10,7 +10,8 @@ import com.google.auth.oauth2.GoogleCredentials;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.io.InputStream;
+import java.io.ByteArrayInputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 
 @Configuration
@@ -18,20 +19,19 @@ public class SheetsRestConfig {
 
     @Bean
     public HttpRequestFactory googleSheetsRequestFactory() throws Exception {
-        // Load the credentials.json file from src/main/resources folder
-        InputStream credentialsStream = getClass().getResourceAsStream("/credentials.json");
-        if (credentialsStream == null) {
-            throw new IllegalStateException("Resource '/credentials.json' not found in classpath");
+        String credentialsJson = System.getenv("GOOGLE_CREDENTIALS_JSON");
+        if (credentialsJson == null || credentialsJson.isEmpty()) {
+            throw new IllegalStateException("Environment variable GOOGLE_CREDENTIALS_JSON not found or empty");
         }
 
-        // Create GoogleCredentials from the InputStream
+        ByteArrayInputStream credentialsStream = new ByteArrayInputStream(credentialsJson.getBytes(StandardCharsets.UTF_8));
+
         GoogleCredentials credentials = GoogleCredentials.fromStream(credentialsStream)
             .createScoped(Collections.singletonList("https://www.googleapis.com/auth/spreadsheets"));
 
         HttpTransport httpTransport = new NetHttpTransport();
         JsonFactory jsonFactory = GsonFactory.getDefaultInstance();
 
-        // Create HttpRequestFactory with the credentials adapter
         return httpTransport.createRequestFactory(new HttpCredentialsAdapter(credentials));
     }
 }
