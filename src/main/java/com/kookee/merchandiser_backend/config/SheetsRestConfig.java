@@ -19,16 +19,22 @@ public class SheetsRestConfig {
 
     @Bean
     public HttpRequestFactory googleSheetsRequestFactory() throws Exception {
+        // Read the credentials JSON string from the environment variable
         String credentialsJson = System.getenv("GOOGLE_CREDENTIALS_JSON");
+
         if (credentialsJson == null || credentialsJson.isEmpty()) {
             throw new IllegalStateException("Environment variable GOOGLE_CREDENTIALS_JSON not found or empty");
         }
 
-        ByteArrayInputStream credentialsStream = new ByteArrayInputStream(credentialsJson.getBytes(StandardCharsets.UTF_8));
+        // Convert the JSON string to an input stream
+        ByteArrayInputStream credentialsStream =
+                new ByteArrayInputStream(credentialsJson.getBytes(StandardCharsets.UTF_8));
 
+        // Create credentials with Google Sheets scope
         GoogleCredentials credentials = GoogleCredentials.fromStream(credentialsStream)
-            .createScoped(Collections.singletonList("https://www.googleapis.com/auth/spreadsheets"));
+                .createScoped(Collections.singletonList("https://www.googleapis.com/auth/spreadsheets"));
 
+        // Build the Sheets-compatible HTTP request factory
         HttpTransport httpTransport = new NetHttpTransport();
         JsonFactory jsonFactory = GsonFactory.getDefaultInstance();
 
