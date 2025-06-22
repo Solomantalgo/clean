@@ -2,7 +2,6 @@ package com.kookee.merchandiser_backend.service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -15,8 +14,8 @@ public class GoogleSheetsWriter {
 
     private static final Logger logger = LoggerFactory.getLogger(GoogleSheetsWriter.class);
 
-    @Value("${sheetapi.url}")
-    private String sheetApiUrl;
+    // Replace environment variable with hardcoded URL
+    private static final String SHEET_API_URL = "https://sheet-api-gju6.onrender.com";
 
     public void appendReport(String merchandiser, String outlet, String date, Map<String, Integer> itemsMap) {
         if (itemsMap == null || itemsMap.isEmpty()) {
@@ -26,7 +25,7 @@ public class GoogleSheetsWriter {
 
         try {
             RestTemplate restTemplate = new RestTemplate();
-            URL url = new URL(sheetApiUrl);
+            URL url = new URL(SHEET_API_URL);
 
             List<Map<String, Object>> itemsList = new ArrayList<>();
             for (Map.Entry<String, Integer> entry : itemsMap.entrySet()) {
