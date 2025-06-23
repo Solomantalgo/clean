@@ -15,7 +15,8 @@ public class GoogleSheetsWriter {
     private static final Logger logger = LoggerFactory.getLogger(GoogleSheetsWriter.class);
 
     // Replace environment variable with hardcoded URL
-    private static final String SHEET_API_URL = "https://sheet-api-gju6.onrender.com";
+   private String sheetApiUrl = "https://sheet-api-gju6.onrender.com/report";
+
 
     public void appendReport(String merchandiser, String outlet, String date, Map<String, Integer> itemsMap) {
         if (itemsMap == null || itemsMap.isEmpty()) {
